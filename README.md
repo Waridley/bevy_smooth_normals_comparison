@@ -22,10 +22,10 @@ This last screenshot shows the vertex normals using gizmo arrows. In my
 implementation, the peak normal is pointing straight up.
 
 However, this view does highlight another potential drawback of this approach:
-The normal in the concave corner where the gambrel meets the spire is almost
-entirely influenced by the spire face and not the ridge of the gambrel. It's
+The normal in the concave corner where the gable meets the spire is almost
+entirely influenced by the spire face and not the ridge of the gable. It's
 unclear that that is strictly incorrect, but since the far left vertex of the
-ridge of the gambrel is pointing significantly more in the upward direction,
+ridge of the gable is pointing significantly more in the upward direction,
 scaling the mesh along the normals would result in a more tilted ridge. It also
 results in a more pronounced faux-ambient occlusion effect.
 

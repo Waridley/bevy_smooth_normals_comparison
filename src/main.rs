@@ -128,9 +128,9 @@ fn generate_demo_mesh() -> Mesh {
 		Vec3::new(1.0, 0.0, 1.0), // spire front right (4)
 		Vec3::new(1.0, 0.0, -1.0), // spire back right (5)
 		
-		Vec3::new(-2.0, 0.0, -1.0), // gambrel back left (6)
-		Vec3::new(-2.0, 8.0, 0.0), // gambrel left center (7)
-		Vec3::new(-2.0, 0.0, 1.0), // gambrel front left (8)
+		Vec3::new(-2.0, 0.0, -1.0), // gable back left (6)
+		Vec3::new(-2.0, 8.0, 0.0), // gable left center (7)
+		Vec3::new(-2.0, 0.0, 1.0), // gable front left (8)
 	];
 	#[rustfmt::skip]
 	let indices = Indices::U16(vec![
@@ -140,11 +140,11 @@ fn generate_demo_mesh() -> Mesh {
 		0, 3, 4, // spire front
 		0, 4, 5, // spire right
 	
-		2, 1, 7, // gambrel back tri A
-		7, 1, 6, // gambrel back tri B
-		2, 7, 3, // gambrel front tri A
-		3, 7, 8, // gambrel front tri B
-		7, 6, 8, // gambrel left face
+		2, 1, 7, // gable back tri A
+		7, 1, 6, // gable back tri B
+		2, 7, 3, // gable front tri A
+		3, 7, 8, // gable front tri B
+		7, 6, 8, // gable end
 	]);
 	Mesh::new(
 		PrimitiveTopology::TriangleList,
