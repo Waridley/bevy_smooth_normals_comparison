@@ -5,7 +5,7 @@ use bevy::input::common_conditions::input_toggle_active;
 use bevy::pbr::wireframe::{WireframeConfig, WireframePlugin};
 use bevy::prelude::*;
 use bevy::render::camera::ScalingMode;
-use bevy::render::mesh::{Indices, PrimitiveTopology, VertexAttributeValues};
+use bevy::render::mesh::{Indices, PrimitiveTopology};
 use std::f32::consts::{FRAC_PI_2, PI};
 
 const CAM_DIST: f32 = 20.0;
@@ -39,9 +39,9 @@ fn setup(
 ) {
     let mut mesh_a = generate_demo_mesh();
     let mut mesh_b = mesh_a.clone();
-
-    mesh_a.compute_smooth_normals();
-    compute_geometric_normals(&mut mesh_b);
+    
+    mesh_a.compute_face_weighted_normals();
+    mesh_b.compute_smooth_normals();
 
     info!(a_center_normal=?mesh_a.attribute(Mesh::ATTRIBUTE_NORMAL).unwrap().as_float3().unwrap().first().unwrap());
     info!(b_center_normal=?mesh_b.attribute(Mesh::ATTRIBUTE_NORMAL).unwrap().as_float3().unwrap().first().unwrap());
@@ -154,49 +154,6 @@ fn generate_demo_mesh() -> Mesh {
     )
     .with_inserted_attribute(Mesh::ATTRIBUTE_POSITION, verts)
     .with_inserted_indices(indices)
-}
-
-fn geometric_normals_impl(positions: &[[f32; 3]], indices: &Indices) -> Vec<Vec3> {
-    let mut normals = vec![Vec3::ZERO; positions.len()];
-
-    for [a, b, c] in indices.iter().array_chunks::<3>() {
-        let pa = Vec3::from(positions[a]);
-        let pb = Vec3::from(positions[b]);
-        let pc = Vec3::from(positions[c]);
-        let norm = Triangle3d::new(pa, pb, pc)
-            .normal()
-            .as_ref()
-            .map(Dir3::as_vec3)
-            .unwrap_or(Vec3::ZERO);
-
-        let wa = (pb - pa).angle_between(pc - pa);
-        let wb = (pa - pb).angle_between(pc - pb);
-        let wc = (pa - pc).angle_between(pb - pc);
-
-        normals[a] += norm * wa;
-        normals[b] += norm * wb;
-        normals[c] += norm * wc;
-    }
-
-    normals.iter_mut().for_each(|n| *n = n.normalize_or_zero());
-    normals
-}
-
-pub fn compute_geometric_normals(mesh: &mut Mesh) {
-    let Some(positions) = mesh.attribute(Mesh::ATTRIBUTE_POSITION) else {
-        error!("Mesh is missing positions");
-        return;
-    };
-    let VertexAttributeValues::Float32x3(positions) = positions else {
-        error!("Positions are not Float32x3");
-        return;
-    };
-    let Some(indices) = mesh.indices() else {
-        error!("Mesh is not indexed");
-        return;
-    };
-    let normals = geometric_normals_impl(positions, indices);
-    mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
 }
 
 fn move_cam(
